@@ -35,6 +35,27 @@ type Callback interface {
 	CallDestinationIP(string)
 }
 
+/*type Cb struct {
+
+}
+
+func (c Cb)CallFd(fb int)  {
+	fmt.Println(fb)
+}
+func (c Cb)CallStatus(fb int)  {
+	fmt.Println(fb)
+}
+func (c Cb)CallUploadFlow(fb int)  {
+	fmt.Println(fb)
+}
+func (c Cb)CallDownloadFlow(fb int)  {
+	fmt.Println(fb)
+}
+
+func (c Cb)CallDestinationIP(s string)  {
+	fmt.Println(s)
+}*/
+
 type configData struct {
 	OwnPrivate   string `json:"own_private"`
 	OwnPublic    string `json:"own_public"`
@@ -51,6 +72,68 @@ type configData struct {
 }
 
 func main(){
+	/*private,public := GetPriAndPubKey()
+
+	config := configData{
+		OwnPrivate:   private,
+		OwnPublic:    public,
+		TheirPublic:  "YwCI0t17PegezDkGISuHcOMgYdFCpwvY7C0Q+nTp+Qs=",
+		Endpoint:     "152.32.190.101:6666",
+		AllowIp:      "0.0.0.0/0, ::0/0",
+		LogPath:      "./diary/info_diary.log",
+		IsIOS:        "",
+		Ts:           0,
+		Sign:         "",
+		Netmask:      32,
+		IntervalTime: 50,
+	}
+
+	file ,err:= os.Open("./fb.txt")
+	if err != nil{
+		fmt.Println(err)
+		panic(err)
+	}
+
+	fd := file.Fd()
+
+	configStr,err := json.Marshal(config)
+	if err != nil{
+		fmt.Println(err)
+		panic(err)
+	}
+	str := Init(int(fd),string(configStr))
+
+	fmt.Println(str)
+	cb := Cb{}
+	if str == "" {
+		s := Start(int32(fd),cb)
+		fmt.Println(s)
+	}*/
+	/*[Interface]
+	PrivateKey = qFmhY+lwAgoZpAPkw6uSV3RB1a+8tYSgD78e4GgZ3Gg=
+	Address = 10.0.0.2/24
+	DNS = 8.8.8.8
+	MTU = 1420
+	[Peer]
+	PublicKey = YwCI0t17PegezDkGISuHcOMgYdFCpwvY7C0Q+nTp+Qs=
+	Endpoint = 152.32.190.101:6666
+	AllowedIPs = 0.0.0.0/0, ::0/0
+	PersistentKeepalive = 30*/
+
+
+	/*{
+		"own_private":  string,      //上面接口获取的私钥
+		"own_public":   string,     //上面接口获取的公钥
+		"their_public": string,     //服务器的公钥
+		"endpoint":     string,     //服务器的IP
+		"allow_ip":     string,     //分配的客户端虚拟ip
+		"log_path":     string,     //存放的日志
+		"is_iOS":       string,     //是否是iOS，不是就填空
+		"ts":           int,        //到期时间
+		"sign":         string,     //签名串
+		"netmask":      int,         //固定值32
+		"interval_time":  int        //间隔时间，用来统计网络异常时多久上报一次101。默认50s
+	}*/
 
 }
 
@@ -179,13 +262,14 @@ func status(c Callback) {
 
 
 //export GetPriAndPubKey
-func GetPriAndPubKey() /*string*/ {
+func GetPriAndPubKey() (string,string) {
 	random := rand.Reader
 
 	var pri, pub [32]byte
 	_, err := io.ReadFull(random, pri[:])
 	if err != nil {
 		fmt.Println("Error:",err)
+		return "",""
 		os.Exit(1)
 	}
 
@@ -200,6 +284,7 @@ func GetPriAndPubKey() /*string*/ {
 
 	//return private + "," + public
 	fmt.Println(private + "," + public)
+	return private,public
 }
 
 //export GetDomain

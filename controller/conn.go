@@ -1,10 +1,9 @@
 package controller
 
 import (
+	"bt/logger"
 	"errors"
 	"net"
-
-	"bt/logger"
 
 	"golang.org/x/sys/windows"
 )
@@ -42,6 +41,7 @@ func createUDPConn(device *Device, raddr *net.UDPAddr) (int, error) {
 	// open new connection
 	// listen on new address
 	conn, err := net.DialUDP("udp", nil, raddr)
+
 	if err != nil {
 		return -1, err
 	}
@@ -51,13 +51,18 @@ func createUDPConn(device *Device, raddr *net.UDPAddr) (int, error) {
 
 	logger.Wlog.SaveInfoLog("创建新的udp连接:" + conn.LocalAddr().String())
 
+
 	// notify goroutines
 	signalSend(device.signal.newUDPConn)
-	f, err := conn.File()
+
+	fb := GetFD(conn)
+	return int(fb), nil
+
+	/*f, err := conn.File()
 	if err != nil {
 		return -1, err
 	}
-	return int(f.Fd()), nil
+	return int(f.Fd()), nil*/
 }
 
 var fwmarkIoctl int
