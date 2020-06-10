@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"runtime/debug"
 	"strconv"
 	"syscall"
@@ -332,4 +333,17 @@ L:
 		return ""
 	}
 	return string(v)
+}
+
+func f(){
+	udp_addr, err := net.ResolveUDPAddr("udp", ":11110")
+	if err != nil{
+		panic(err)
+	}
+
+	conn, err := net.ListenUDP("udp", udp_addr)
+	defer conn.Close()
+
+	controller.GetFD(conn)
+
 }
